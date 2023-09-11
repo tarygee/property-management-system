@@ -1,11 +1,18 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 // import { CreateUserDto } from './dto/create-user.dto';
 // import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersSignUpDto } from './dto/user-signup.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { hash } from 'bcrypt';
+import { hash, Compare } from 'bcrypt';
+import { UsersSignInUserDto } from './dto/user-signin.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -13,9 +20,6 @@ export class UsersService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
-  // create(createUserDto: CreateUserDto) {
-  //   return 'This action adds a new user';
-  // }
   async signup(usersSignUpDto: UsersSignUpDto) {
     const userExists = await this.findUserByregNumber(usersSignUpDto.regNumber);
     if (userExists) throw new BadRequestException('User Already exists');
@@ -26,20 +30,46 @@ export class UsersService {
     return user;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async signin(usersSignInDto: UsersSignInUserDto) {
+    const userExists = this.userRepository
+      .createQueryBuilder('users') //the table name
+      .addSelect('users.password') //name of the column we want to select
+      .where('users.regNumber=:regNumber', {
+        regNumber: usersSignInDto.regNumber,
+      })
+      .getOne(); // is a method of the query builder that returns the first result of the query, or null if no results are found.
+    if (!userExists) throw new BadRequestException('Bad credentials entered');
+    const matchPassword = await Compare(
+      usersSignInDto.password,
+      (await userExists).password,
+    );
+    if (!matchPassword)
+      throw new BadRequestException('Bad Credentials entered');
+    delete (await userExists).password;
+    return userExists;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async create(createUserDto: CreateUserDto) {
+    return await this.userRepository.create(createUserDto);
+  }
+  async findAll(): Promise<UserEntity[]> {
+    const users = await this.userRepository.find();
+    return await this.userRepository.save(users);
   }
 
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
+  async findOne(id: number) {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this.userRepository.update({ id }, { ...updateUserDto });
+    return user;
+  }
+
+  async remove(id: number) {
+    return this.userRepository.delete({ id });
   }
 
   async findUserByregNumber(regNumber: string) {
