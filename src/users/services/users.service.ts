@@ -5,14 +5,14 @@ import {
 } from '@nestjs/common';
 // import { CreateUserDto } from './dto/create-user.dto';
 // import { UpdateUserDto } from './dto/update-user.dto';
-import { UsersSignUpDto } from './dto/user-signup.dto';
+import { UsersSignUpDto } from '../dto/user-signup.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from './entities/user.entity';
+import { UserEntity } from '../entities/user.entity';
 import { Repository } from 'typeorm';
-import { hash, Compare } from 'bcrypt';
-import { UsersSignInUserDto } from './dto/user-signin.dto';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Compare } from 'bcrypt';
+import { UsersSignInUserDto } from '../dto/user-signin.dto';
+import { CreateUserDto } from '../dto/create-user.dto';
+import { UpdateUserDto } from '../dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -23,7 +23,7 @@ export class UsersService {
   async signup(usersSignUpDto: UsersSignUpDto) {
     const userExists = await this.findUserByregNumber(usersSignUpDto.regNumber);
     if (userExists) throw new BadRequestException('User Already exists');
-    usersSignUpDto.password = await hash(usersSignUpDto.password);
+    // usersSignUpDto.password = await hash(usersSignUpDto.password);
     const user = await this.userRepository.create(usersSignUpDto);
     await this.userRepository.save(user);
     delete user.password;

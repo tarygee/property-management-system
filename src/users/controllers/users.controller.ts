@@ -7,7 +7,7 @@ import {
   Patch,
   Delete,
 } from '@nestjs/common';
-import { UsersService } from '../users.service';
+import { UsersService } from '../services/users.service';
 import { UsersSignUpDto } from '../dto/user-signup.dto';
 import { UsersSignInUserDto } from '../dto/user-signin.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
