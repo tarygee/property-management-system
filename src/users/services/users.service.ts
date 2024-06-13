@@ -3,15 +3,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-// import { CreateUserDto } from './dto/create-user.dto';
-// import { UpdateUserDto } from './dto/update-user.dto';
+
 import { UsersSignUpDto } from '../dto/user-signup.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import { Compare } from 'bcrypt';
 import { UsersSignInUserDto } from '../dto/user-signin.dto';
-import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 
 @Injectable()
@@ -21,7 +19,7 @@ export class UsersService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
   async signup(usersSignUpDto: UsersSignUpDto) {
-    const userExists = await this.findUserByregNumber(usersSignUpDto.regNumber);
+    const userExists = await this.findUserByemail(usersSignUpDto.email);
     if (userExists) throw new BadRequestException('User Already exists');
     // usersSignUpDto.password = await hash(usersSignUpDto.password);
     const user = await this.userRepository.create(usersSignUpDto);
@@ -34,8 +32,8 @@ export class UsersService {
     const userExists = this.userRepository
       .createQueryBuilder('users') //the table name
       .addSelect('users.password') //name of the column we want to select
-      .where('users.regNumber=:regNumber', {
-        regNumber: usersSignInDto.regNumber,
+      .where('users.email=:email', {
+        email: usersSignInDto.email,
       })
       .getOne(); // is a method of the query builder that returns the first result of the query, or null if no results are found.
     if (!userExists) throw new BadRequestException('Bad credentials entered');
@@ -49,9 +47,6 @@ export class UsersService {
     return userExists;
   }
 
-  async create(createUserDto: CreateUserDto) {
-    return await this.userRepository.create(createUserDto);
-  }
   async findAll(): Promise<UserEntity[]> {
     const users = await this.userRepository.find();
     return await this.userRepository.save(users);
@@ -69,10 +64,10 @@ export class UsersService {
   }
 
   async remove(id: number) {
-    return this.userRepository.delete({ id });
+    return await this.userRepository.delete({ id });
   }
 
-  async findUserByregNumber(regNumber: string) {
-    return await this.userRepository.findOneBy({ regNumber });
+  async findUserByemail(email: string) {
+    return await this.userRepository.findOneBy({ email });
   }
 }

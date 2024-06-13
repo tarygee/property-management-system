@@ -3,9 +3,10 @@ import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 export class UsersSignInUserDto {
   @IsNotEmpty({})
   @IsString({})
-  regNumber: string
+  email: string
   
-  @IsNotEmpty({ message: 'Password can not be null'})
-  @MinLength(8, {message: 'Password should have a min lenth of 8'})
+  @IsNotEmpty({})
+  @MinLength(8, {})
+  @IsString({})
   password: string;
 }

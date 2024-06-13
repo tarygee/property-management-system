@@ -1,19 +1,25 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Category } from '../utility/common/property-category';
 
 @Entity('property')
 export class PropertyEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    name: string;
+  @Column({ nullable: false })
+  name: string;
 
-    @Column({ nullable: false, unique:true })
-    serialNumber: string;
+  @Column({ unique: true })
+  serialNumber: string;
 
-    @Column()
-    category: string;
+  @Column({
+    nullable: false,
+    type: 'enum',
+    enum: Category,
+    default: Category.ELECTRONIC,
+  })
+  category: Category[];
 
-    @Column()
-    status: string;
+  @Column({ type: 'varchar' })
+  image: string;
 }

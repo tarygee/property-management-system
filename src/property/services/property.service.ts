@@ -9,11 +9,11 @@ import { Repository } from 'typeorm';
 export class PropertyService {
   constructor(
     @InjectRepository(PropertyEntity)
-    private readonly propertyRepository: Repository<PropertyEntity>
+    private readonly propertyRepository: Repository<PropertyEntity>,
   ) {}
- async create(createPropertyDto: CreatePropertyDto) {
-   const newProperty = await this.propertyRepository.create(createPropertyDto)
-   return await this.propertyRepository.save(newProperty)
+  async create(createPropertyDto: CreatePropertyDto) {
+    const newProperty = this.propertyRepository.create(createPropertyDto);
+    return await this.propertyRepository.save(newProperty);
   }
 
   async findAll(): Promise<PropertyEntity[]> {
@@ -22,13 +22,16 @@ export class PropertyService {
   }
 
   async findOne(id: number) {
-   const property = await this.propertyRepository.findOneBy({ id });
-   if (!property) throw new NotFoundException('Property not found')
+    const property = await this.propertyRepository.findOneBy({ id });
+    if (!property) throw new NotFoundException('Property not found');
     return property;
   }
 
   async update(id: number, updatePropertyDto: UpdatePropertyDto) {
-    const property = await this.propertyRepository.update({ id }, {...updatePropertyDto });
+    const property = await this.propertyRepository.update(
+      { id },
+      { ...updatePropertyDto },
+    );
     return property;
   }
 

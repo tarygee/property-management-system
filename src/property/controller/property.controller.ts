@@ -32,14 +32,14 @@ export class PropertyController {
 
   @Patch(':id')
   async update(
-  @Param('id') id: number,
+    @Param('id') id: number,
     @Body() updatePropertyDto: UpdatePropertyDto,
   ) {
     return await this.propertyService.update(+id, updatePropertyDto);
   }
 
   @Delete(':id')
- async remove(@Param('id') id: number) {
+  async remove(@Param('id') id: number) {
     return await this.propertyService.remove(+id);
   }
 }
