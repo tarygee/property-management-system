@@ -8,7 +8,7 @@ import { UsersSignUpDto } from '../dto/user-signup.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entities/user.entity';
 import { Repository } from 'typeorm';
-import { Compare } from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { UsersSignInUserDto } from '../dto/user-signin.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 
@@ -22,9 +22,15 @@ export class UsersService {
     const userExists = await this.findUserByemail(usersSignUpDto.email);
     if (userExists) throw new BadRequestException('User Already exists');
     // usersSignUpDto.password = await hash(usersSignUpDto.password);
-    const user = await this.userRepository.create(usersSignUpDto);
+
+    // Hash the password before saving the user
+    const hashedPassword = await bcrypt.hash(usersSignUpDto.password, 10);
+    const user = await this.userRepository.create({
+      ...usersSignUpDto,
+      password: hashedPassword,
+    });
     await this.userRepository.save(user);
-    delete user.password;
+    delete user.password; // Remove the password from the returned user object
     return user;
   }
 
@@ -37,10 +43,11 @@ export class UsersService {
       })
       .getOne(); // is a method of the query builder that returns the first result of the query, or null if no results are found.
     if (!userExists) throw new BadRequestException('Bad credentials entered');
-    const matchPassword = await Compare(
+    const matchPassword = await bcrypt.compare(
       usersSignInDto.password,
       (await userExists).password,
     );
+
     if (!matchPassword)
       throw new BadRequestException('Bad Credentials entered');
     delete (await userExists).password;

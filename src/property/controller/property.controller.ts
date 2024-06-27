@@ -15,7 +15,7 @@ import { UpdatePropertyDto } from '../dto/update-property.dto';
 export class PropertyController {
   constructor(private readonly propertyService: PropertyService) {}
 
-  @Post('create')
+  @Post('submit')
   async create(@Body() createPropertyDto: CreatePropertyDto) {
     return await this.propertyService.create(createPropertyDto);
   }

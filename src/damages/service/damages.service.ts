@@ -41,4 +41,44 @@ export class DamagesService {
   async remove(id: number) {
     await this.damageRepository.delete(id);
   }
+
+  async findFilteredDamage(
+    startDate: Date,
+    endDate: Date,
+  ): Promise<DamageEntity[]> {
+    // Example query to filter damage items based on date range
+    // try {
+    //   const data = await this.damageRepository
+    //     .createQueryBuilder('damages')
+    //     .where('damages.createAt   BETWEEN :startDate AND :endDate', {
+    //       startDate,
+    //       endDate,
+    //     })
+    //     .getMany();
+    //   return data;
+    // } catch {
+    //   throw new NotFoundException('Failed to find filtered damage');
+    // }
+
+    try {
+      const data = await this.damageRepository
+        .createQueryBuilder('damages')
+        .select([
+          'damages.id',
+          'damages.name',
+          'damages.serialNumber',
+          'damages.block',
+          'damages.description',
+          'DATE(damages.createAt) as createAt', // Extract only the date part
+        ])
+        .where('DATE(damages.createAt) BETWEEN :startDate AND :endDate', {
+          startDate,
+          endDate,
+        })
+        .getRawMany();
+      return data;
+    } catch {
+      throw new NotFoundException('Failed to find filtered damage');
+    }
+  }
 }

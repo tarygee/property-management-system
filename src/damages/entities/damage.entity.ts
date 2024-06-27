@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  Timestamp,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('damages')
 export class DamageEntity {
@@ -22,4 +29,13 @@ export class DamageEntity {
 
   @Column({ nullable: false, type: 'varchar' })
   description: string;
+
+  @CreateDateColumn()
+  createAt: Timestamp;
+
+  @UpdateDateColumn()
+  updateAt: Timestamp;
+
+  // @OneToMany(() => DamageEntity, (fault) => fault.submittedBy)
+  // subnittedBy: DamageEntity[];
 }

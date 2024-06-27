@@ -6,7 +6,6 @@ import {
   Timestamp,
   UpdateDateColumn,
 } from 'typeorm';
-import { Roles } from '../utility/common/user-roles';
 
 @Entity('users')
 export class UserEntity {
@@ -22,8 +21,8 @@ export class UserEntity {
   @Column({ select: false, nullable: false })
   password: string;
 
-  @Column({ type: 'enum', enum: Roles, array: true, default: [Roles.USER] })
-  roles: Roles[];
+  @Column({ nullable: true })
+  role: string;
 
   @CreateDateColumn()
   createAt: Timestamp;

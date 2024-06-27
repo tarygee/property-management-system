@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  Timestamp,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Category } from '../utility/common/property-category';
 
 @Entity('property')
@@ -22,4 +29,10 @@ export class PropertyEntity {
 
   @Column({ type: 'varchar' })
   image: string;
+
+  @CreateDateColumn()
+  createAt: Timestamp;
+
+  @UpdateDateColumn()
+  updateAt: Timestamp;
 }
