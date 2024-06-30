@@ -21,11 +21,8 @@ export class DamagesController {
 
   @Post('submit')
   async create(@Body() reportDamageDto: ReportDamageDto) {
-    try {
-      return await this.damagesService.create(reportDamageDto);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
+    const reportedItem = await this.damagesService.create(reportDamageDto);
+    return reportedItem;
   }
 
   @Get('all')
@@ -48,7 +45,11 @@ export class DamagesController {
     @Body() updateDamageDto: UpdateDamageDto,
   ) {
     try {
-      return await this.damagesService.update(id, updateDamageDto);
+      const updateddamage = await this.damagesService.update(
+        id,
+        updateDamageDto,
+      );
+      return updateddamage;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -80,10 +81,10 @@ export class DamagesController {
     }
   }
 
-  @Delete('damage/:id')
-  async remove(@Param('id') id: number) {
+  @Delete('damage/:serialNumber')
+  async remove(@Param('serialNumber') serialNumber: string) {
     try {
-      await this.damagesService.remove(id);
+      await this.damagesService.remove(serialNumber);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }

@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ReportDamageDto } from '../dto/report-damage.dto';
 import { UpdateDamageDto } from '../dto/update-damage.dto';
 import { Repository } from 'typeorm';
@@ -18,7 +14,6 @@ export class DamagesService {
   async create(reportDamageDto: ReportDamageDto) {
     const damagedItem = this.damageRepository.create(reportDamageDto);
     this.damageRepository.save(damagedItem);
-    if (damagedItem) throw new BadRequestException(' Item is already reported');
     return await damagedItem;
   }
 
@@ -34,12 +29,15 @@ export class DamagesService {
   }
 
   async update(id: number, updateDamageDto: UpdateDamageDto) {
-    await this.damageRepository.update(id, updateDamageDto);
-    return this.findOne(id);
+    const updatedDamage = await this.damageRepository.update(
+      id,
+      updateDamageDto,
+    );
+    return updatedDamage;
   }
 
-  async remove(id: number) {
-    await this.damageRepository.delete(id);
+  async remove(serialNumber: string) {
+    await this.damageRepository.delete(serialNumber);
   }
 
   async findFilteredDamage(

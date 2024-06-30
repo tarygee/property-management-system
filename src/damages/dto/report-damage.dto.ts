@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { Status } from 'src/users/utility/common/property-status';
 
 export class ReportDamageDto {
   @IsString({ message: 'name should be a string' })
@@ -24,4 +25,7 @@ export class ReportDamageDto {
   @IsString({ message: 'descroption should be a string' })
   @IsNotEmpty({ message: 'description should filled' })
   description: string;
+
+  @IsNotEmpty({})
+  status: Status[];
 }
