@@ -11,10 +11,25 @@ export class DamagesService {
     @InjectRepository(DamageEntity)
     private readonly damageRepository: Repository<DamageEntity>,
   ) {}
+  // async create(reportDamageDto: ReportDamageDto) {
+  //   const damagedItem = this.damageRepository.create(reportDamageDto);
+  //   this.damageRepository.save(damagedItem);
+  //   return await damagedItem;
+  // }
   async create(reportDamageDto: ReportDamageDto) {
+    // Check if the damaged item already exists
+    const existingItem = await this.damageRepository.findOne({
+      where: {
+        serialNumber: reportDamageDto.serialNumber,
+      },
+    });
+    if (existingItem) {
+      return existingItem;
+    }
+    // If the item does not exist, create a new one
     const damagedItem = this.damageRepository.create(reportDamageDto);
-    this.damageRepository.save(damagedItem);
-    return await damagedItem;
+    await this.damageRepository.save(damagedItem);
+    return damagedItem;
   }
 
   async findAll() {
@@ -44,20 +59,6 @@ export class DamagesService {
     startDate: Date,
     endDate: Date,
   ): Promise<DamageEntity[]> {
-    // Example query to filter damage items based on date range
-    // try {
-    //   const data = await this.damageRepository
-    //     .createQueryBuilder('damages')
-    //     .where('damages.createAt   BETWEEN :startDate AND :endDate', {
-    //       startDate,
-    //       endDate,
-    //     })
-    //     .getMany();
-    //   return data;
-    // } catch {
-    //   throw new NotFoundException('Failed to find filtered damage');
-    // }
-
     try {
       const data = await this.damageRepository
         .createQueryBuilder('damages')
