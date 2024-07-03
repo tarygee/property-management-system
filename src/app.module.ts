@@ -3,8 +3,8 @@ import { UsersModule } from './users/module/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from 'db/datasource';
 import { PropertyModule } from './property/module/property.module';
-import { DamagesModule } from './damages/damages.module';
-import { DownloadsModule } from './downloads/module/downloads.module';
+import { DamagesModule } from './damages/module/damages.module';
+import { ScheduleModule } from './schedule/module/schedule.module';
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { DownloadsModule } from './downloads/module/downloads.module';
     UsersModule,
     PropertyModule,
     DamagesModule,
-    DownloadsModule,
+    ScheduleModule,
   ],
   controllers: [], //AppController
   providers: [], //AppService

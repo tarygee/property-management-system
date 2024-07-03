@@ -1,4 +1,4 @@
-import { Status } from 'src/users/utility/common/property-status';
+import { Status } from 'src/damages/utility/common/property-status';
 import {
   Column,
   CreateDateColumn,
